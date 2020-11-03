@@ -1,6 +1,7 @@
 """
-Using the Firefox browser and Selenium, reach out to CommCare HQ and
-try to pull down a list of forms, creating spreadsheets to use in the export tool.
+Using standard requests, reach out to CommCare HQ and
+try to pull down a list of cases and forms, creating spreadsheets to use in the export tool,
+populate the databse with these tables (confirming schema columns), and create Django models.
 """
 import json
 import os
@@ -128,6 +129,11 @@ class Command(BaseCommand):
         return case_list
     
     def get_all_forms(self, credentials):
+        """
+        This is a rediculously crazy function.
+        TL;DR: form data comes back as XML, and vastly complicated XML.  I put in a request
+        to their support for JSON format, but it hasn't happened (yet).
+        """
         # load the XML
         login_url = 'https://'+self.form_xml_url+"?format=xml"
 
@@ -375,8 +381,7 @@ class Command(BaseCommand):
     def create_form_spreadsheet(self, form_information, is_loop=False, parent_name=''):
         """
         Using the form information provided, generate an XLSX file to be used in the commcare export tool.
-        :param form_information:
-        :return:
+        Note: this function is also really ugly (because of how we need to handle loops/child forms)
         """
         spreadsheet_relationships = {
             'form_name': form_information['name'],
@@ -461,8 +466,6 @@ class Command(BaseCommand):
             'calculation': 'auto-generated'
             })
 
-        # if is_loop and not form_name.endswith('_form'):
-        #     worksheet.write('E2', 'case.@case_id')
         if not is_loop and not form_name.endswith('_form'):
             worksheet.write('E2', '$.id')
         else:
@@ -766,6 +769,8 @@ class Command(BaseCommand):
         self.generate_case_model(case_obj=case_control)
 
     def find_duplicate_columns(self, form):
+        # basically check the form data for possible duplicate columns
+        # this could happen depending on how you setup your CommCare form attributes
         existing_columns = {}
         duplicate_columns = {}
 
@@ -838,7 +843,7 @@ from djang_commcare.models import CommCareBaseAbstractModel""")
     
     def generate_case_model(self, case_obj):
         """
-        Given a form control object, generate a Django model for it.
+        Given a case control object, generate a Django model for it.
         """
         # make sure our form models directory exists
         output_dir = os.path.join(self.output_directory, 'models')

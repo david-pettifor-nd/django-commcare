@@ -15,7 +15,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/david-pettifor-nd/django-commcare",
-    author="David W Pettifor",=
+    author="David W Pettifor",
     license="GPL",
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -23,7 +23,7 @@ setup(
     ],
     packages=["django_commcare"],
     include_package_data=True,
-    install_requires=["xlsxwriter"],
+    install_requires=["xlsxwriter", "pandas", "xldr"],
     # entry_points={
     #     "console_scripts": [
     #         "realpython=reader.__main__:main",
