@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import FormControl, CaseControl
+
+admin.site.register(FormControl)
+admin.site.register(CaseControl)
