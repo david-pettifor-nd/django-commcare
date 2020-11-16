@@ -745,7 +745,10 @@ class Command(BaseCommand):
         worksheet.write('D5', 'owner_id')
         worksheet.write('E5', 'properties.owner_id')
 
-        current_row = 5
+        worksheet.write('D6', 'parent_id')
+        worksheet.write('E6', 'indices.parent.case_id')
+
+        current_row = 6
 
         # now run through all of its properties
         for case_property in case_information['properties']:
